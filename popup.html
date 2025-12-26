@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WordMark-Zkit</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 360px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f5f5f5;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .header p {
+      font-size: 12px;
+      opacity: 0.9;
+      margin-top: 4px;
+    }
+
+    .tabs {
+      display: flex;
+      background: #fff;
+      border-bottom: 1px solid #eee;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      cursor: pointer;
+      font-size: 14px;
+      color: #666;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .tab:hover {
+      background: #f9f9f9;
+    }
+
+    .tab.active {
+      color: #667eea;
+      border-bottom-color: #667eea;
+    }
+
+    .content {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .panel {
+      display: none;
+      padding: 12px;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    .stats {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .stat-card {
+      flex: 1;
+      background: #fff;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .stat-card .number {
+      font-size: 24px;
+      font-weight: 600;
+      color: #667eea;
+    }
+
+    .stat-card .label {
+      font-size: 12px;
+      color: #888;
+      margin-top: 4px;
+    }
+
+    .word-list {
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .word-item {
+      padding: 12px;
+      border-bottom: 1px solid #f0f0f0;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .word-item:last-child {
+      border-bottom: none;
+    }
+
+    .word-item:hover {
+      background: #f9f9f9;
+    }
+
+    .word-item .word {
+      font-size: 16px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .word-item .phonetic {
+      font-size: 12px;
+      color: #888;
+      margin-top: 2px;
+    }
+
+    .word-item .meaning {
+      font-size: 13px;
+      color: #666;
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    .word-item .meta {
+      font-size: 11px;
+      color: #aaa;
+      margin-top: 6px;
+    }
+
+    .word-item .actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .word-item .actions button {
+      padding: 4px 12px;
+      font-size: 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .btn-delete {
+      background: #ffebee;
+      color: #f44336;
+    }
+
+    .btn-delete:hover {
+      background: #ffcdd2;
+    }
+
+    .btn-source {
+      background: #e3f2fd;
+      color: #1976d2;
+    }
+
+    .btn-source:hover {
+      background: #bbdefb;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #888;
+    }
+
+    .empty-state .icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    .search-box {
+      padding: 12px;
+      background: #fff;
+      border-bottom: 1px solid #eee;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .search-box input:focus {
+      border-color: #667eea;
+    }
+
+    .export-btn {
+      display: block;
+      width: calc(100% - 24px);
+      margin: 12px;
+      padding: 12px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .export-btn:hover {
+      background: #5a6fd6;
+    }
+
+    .settings-section {
+      background: #fff;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .settings-section h3 {
+      font-size: 14px;
+      color: #333;
+      margin-bottom: 12px;
+    }
+
+    .setting-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+    }
+
+    .setting-item label {
+      font-size: 14px;
+      color: #666;
+    }
+
+    .clear-btn {
+      padding: 8px 16px;
+      background: #f44336;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .clear-btn:hover {
+      background: #d32f2f;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>📚 WordMark-Zkit</h1>
+    <p>选词高亮 · 生词本</p>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-panel="vocabulary">生词本</div>
+    <div class="tab" data-panel="settings">设置</div>
+  </div>
+
+  <div class="content">
+    <!-- 生词本面板 -->
+    <div class="panel active" id="vocabulary">
+      <div class="stats">
+        <div class="stat-card">
+          <div class="number" id="wordCount">0</div>
+          <div class="label">生词总数</div>
+        </div>
+        <div class="stat-card">
+          <div class="number" id="todayCount">0</div>
+          <div class="label">今日新增</div>
+        </div>
+      </div>
+
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="搜索单词...">
+      </div>
+
+      <div class="word-list" id="wordList">
+        <div class="empty-state">
+          <div class="icon">📖</div>
+          <p>生词本为空</p>
+          <p style="font-size: 12px; margin-top: 8px;">选中网页中的英文单词开始学习</p>
+        </div>
+      </div>
+
+      <button class="export-btn" id="exportBtn">📥 导出生词本 (CSV)</button>
+    </div>
+
+    <!-- 设置面板 -->
+    <div class="panel" id="settings">
+      <div class="settings-section">
+        <h3>数据管理</h3>
+        <div class="setting-item">
+          <label>清空所有高亮记录</label>
+          <button class="clear-btn" id="clearHighlights">清空</button>
+        </div>
+        <div class="setting-item">
+          <label>清空生词本</label>
+          <button class="clear-btn" id="clearVocabulary">清空</button>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>关于</h3>
+        <p style="font-size: 13px; color: #666; line-height: 1.6;">
+          WordMark-Zkit 是一个帮助你学习英语的浏览器扩展。<br><br>
+          ✨ 选中单词自动显示工具栏<br>
+          📌 高亮重要单词<br>
+          📚 保存到生词本复习
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
