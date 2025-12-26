@@ -1,4 +1,4 @@
-# WordMark-Zkit
+# chrome-plug-in/WordMark-Zkit
 
 ✨ 选中单词自动显示工具栏
 📌 高亮重要单词
